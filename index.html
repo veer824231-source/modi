@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TERMINAL_ACCESS_VEER_PRO</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;800&family=Orbitron:wght@900&display=swap" rel="stylesheet">
+    <style>
+        :root { --hacker-neon: #00ff66; --deep-bg: #020502; }
+        body { 
+            font-family: 'JetBrains Mono', monospace; 
+            background: var(--deep-bg); 
+            color: var(--hacker-neon); 
+            overflow: hidden; 
+            touch-action: pan-x pan-y; /* Allows map panning on touch */
+        }
+        
+        #map { 
+            width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; 
+            filter: invert(100%) hue-rotate(180deg) brightness(0.6) contrast(1.2);
+            cursor: crosshair; /* Hacker style cursor */
+        }
+        
+        .ui-layer { position: relative; z-index: 10; pointer-events: none; height: 100dvh; }
+        .interactive { pointer-events: auto; }
+
+        /* Fingerprint Button Realistic */
+        .fp-button {
+            width: 85px; height: 85px;
+            background: radial-gradient(circle, #111, #000);
+            border: 2px solid rgba(0, 255, 102, 0.2);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            position: relative; transition: 0.3s; cursor: pointer;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5), inset 0 0 10px rgba(0,255,102,0.1);
+            -webkit-tap-highlight-color: transparent;
+        }
+        @media (min-width: 768px) { .fp-button { width: 100px; height: 100px; } }
+
+        .fp-button:active { transform: scale(0.95); border-color: var(--hacker-neon); box-shadow: 0 0 40px var(--hacker-neon); }
+        .fp-scan-line {
+            position: absolute; width: 100%; height: 2px; background: var(--hacker-neon);
+            box-shadow: 0 0 15px var(--hacker-neon); top: 0; display: none;
+        }
+
+        .hud-panel {
+            background: rgba(0, 10, 5, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 102, 0.3);
+            padding: 12px;
+        }
+
+        .scanning-retina {
+            width: 150px; height: 150px; border: 1px solid var(--hacker-neon); border-radius: 50%;
+            position: relative; overflow: hidden; display: none;
+        }
+        @media (min-width: 768px) { .scanning-retina { width: 200px; height: 200px; } }
+
+        .laser-retina { position: absolute; width: 100%; height: 2px; background: var(--hacker-neon); top: 0; animation: scan 2s infinite linear; }
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+
+        .glitch-text { font-size: 3.5rem; text-align: center; }
+        @media (min-width: 768px) { .glitch-text { font-size: 8rem; } }
+    </style>
+</head>
+<body class="h-screen w-full">
+
+    <div id="map" class="interactive"></div>
+
+    <div class="ui-layer flex flex-col p-4 md:p-8 justify-between">
+        
+        <div class="flex justify-between items-start gap-4">
+            <div class="hud-panel flex-1 md:flex-none">
+                <h1 class="font-black text-xs md:text-xl text-white">VEER_INTEL_OS_v2.0</h1>
+                <p class="text-[8px] md:text-[10px] opacity-60">LOC: 24.69° N, 84.99° E</p>
+            </div>
+            <div class="hud-panel text-right flex-1 md:flex-none">
+                <p class="text-[8px] md:text-xs">UPLINK: SECURE</p>
+                <p class="text-[8px] md:text-xs text-red-500 font-bold truncate">BYPASSING_FIREWALL...</p>
+            </div>
+        </div>
+
+        <div class="flex flex-col items-center gap-6 md:gap-10">
+            <div id="statusText" class="hud-panel interactive px-6 py-3 text-center w-full max-w-[280px] md:max-w-md">
+                <h2 class="text-xl md:text-3xl font-bold tracking-widest text-white mb-1">ACCESS_LOCKED</h2>
+                <p class="text-[8px] md:text-xs opacity-50 uppercase">Biometric Verification Required</p>
+            </div>
+
+            <div id="interactionZone" class="flex flex-col md:flex-row items-center gap-8 md:gap-16">
+                <div id="retinaFrame" class="scanning-retina hud-panel">
+                    <div class="laser-retina"></div>
+                    <svg class="w-full h-full p-8 opacity-20" viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                </div>
+
+                <div id="fpBtnContainer" class="flex flex-col items-center gap-3 interactive">
+                    <div class="fp-button" id="fingerButton" 
+                         onmousedown="startFingerprint()" onmouseup="stopFingerprint()" onmouseleave="stopFingerprint()"
+                         ontouchstart="startFingerprint(event)" ontouchend="stopFingerprint()">
+                        <div class="fp-scan-line" id="fpLine"></div>
+                        <svg class="w-10 h-10 text-green-500 opacity-40" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.81 4.47c-.08 0-.16-.02-.23-.06C15.66 3.42 14 3 12.01 3c-1.98 0-3.86.47-5.57 1.41-.24.13-.54.04-.67-.2-.13-.24-.04-.55.2-.68C7.82 2.51 9.84 2 12.01 2c2.12 0 3.91.47 5.57 1.41.24.13.33.44.2.68-.08.15-.24.23-.4.23z"/>
+                            <path d="M12 22c-1.1 0-2-.9-2-2V9c0-1.1.9-2 2-2s2 .9 2 2v11c0 1.1-.9 2-2 2z"/>
+                        </svg>
+                    </div>
+                    <p class="text-[9px] uppercase tracking-[0.3em] opacity-40 font-bold">Verify Thumb</p>
+                </div>
+            </div>
+
+            <button id="initiateBtn" onclick="initiateSequence()" class="interactive px-8 py-4 bg-white text-black text-xs md:text-sm font-black uppercase tracking-widest hover:bg-green-500 transition-all shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                Initiate Secure Sequence
+            </button>
+        </div>
+
+        <div class="hud-panel flex justify-between text-[8px] md:text-[10px] opacity-60">
+            <div class="flex gap-4 md:gap-10">
+                <p>OS: VEER_BODHGAYA</p>
+                <p class="hidden md:block">LATENCY: 12ms</p>
+            </div>
+            <p>ENCRYPTION: AES_256_ACTIVE</p>
+        </div>
+    </div>
+
+    <div id="finalStage" class="fixed inset-0 bg-black z-[100] hidden flex-col items-center justify-center p-6 text-center">
+        <h1 class="glitch-text font-black text-white italic leading-none mb-4">SYSTEM BREACHED</h1>
+        <p class="text-green-500 tracking-[0.4em] md:tracking-[1.5em] uppercase text-[10px] md:text-lg">Database Extraction Complete 100%</p>
+        <button onclick="location.reload()" class="interactive mt-12 border border-green-500/50 text-green-500 px-10 py-3 text-[10px] uppercase tracking-widest hover:bg-green-500 hover:text-black transition-all">Disconnect Session</button>
+    </div>
+
+    <script>
+        const synth = window.speechSynthesis;
+        let isHolding = false;
+        let scanProgress = 0;
+
+        // Leaflet Map with dragging ENABLED
+        const map = L.map('map', { 
+            zoomControl: false, 
+            dragging: true,       // Dragging enabled
+            scrollWheelZoom: true, 
+            doubleClickZoom: true,
+            touchZoom: true 
+        }).setView([24.6951, 84.9913], 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        function speak(text, pitch = 0.3) {
+            synth.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'hi-IN'; u.pitch = pitch; u.rate = 1;
+            synth.speak(u);
+        }
+
+        function initiateSequence() {
+            gsap.to("#initiateBtn", { opacity: 0, scale: 0.8, duration: 0.3, onComplete: () => {
+                document.getElementById('initiateBtn').style.display = 'none';
+            }});
+            document.getElementById('retinaFrame').style.display = 'block';
+            speak("Authorization shuru. Veer, screen par dekhein, retinal scan active ho raha hai.");
+            
+            setTimeout(() => {
+                document.getElementById('statusText').innerHTML = `<h2 class="text-xl md:text-3xl font-bold text-white mb-1">RETINA_MATCHED</h2><p class="text-[10px] text-green-400">WAITING FOR THUMBPRINT</p>`;
+                speak("Retina match ho gaya. Ab neeche diye huye button par thumb hold karein.");
+            }, 4000);
+        }
+
+        function startFingerprint(e) {
+            if(e && e.type === 'touchstart') e.preventDefault(); 
+            isHolding = true;
+            document.getElementById('fpLine').style.display = 'block';
+            gsap.to("#fpLine", { top: '100%', duration: 1.2, repeat: -1, yoyo: true, ease: "power1.inOut" });
+            speak("Scanning... Ungli mat hatana.");
+            
+            const checkInt = setInterval(() => {
+                if(!isHolding) { clearInterval(checkInt); return; }
+                scanProgress++;
+                if(scanProgress >= 5) {
+                    clearInterval(checkInt);
+                    accessGranted();
+                }
+            }, 1000);
+        }
+
+        function stopFingerprint() {
+            if(!isHolding) return;
+            isHolding = false;
+            document.getElementById('fpLine').style.display = 'none';
+            gsap.killTweensOf("#fpLine");
+            if(scanProgress < 5) {
+                speak("Scan fail! Kripya hold karke rakhein.");
+                scanProgress = 0;
+            }
+        }
+
+        function accessGranted() {
+            speak("Verification complete. System aapka hai. Mauja hi Mauja!");
+            document.getElementById('statusText').innerHTML = `<h2 class="text-xl md:text-3xl font-bold text-white">ACCESS_GRANTED</h2>`;
+            
+            map.flyTo([24.6951, 84.9913], 18, { duration: 4 });
+            
+            setTimeout(() => {
+                document.getElementById('finalStage').style.display = 'flex';
+                speak("Duniya ab aapke control mein hai.", 0.6);
+            }, 5000);
+        }
+
+        // First click triggers the lock voice
+        document.body.addEventListener('click', () => {
+            if(!synth.speaking && scanProgress === 0) speak("System locked. Identity confirm karein.", 0.2);
+        }, {once: true});
+    </script>
+</body>
+</html>
