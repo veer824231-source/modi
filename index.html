@@ -100,38 +100,20 @@
         .buy-now {
             display: block; width: 100%; padding: 25px; 
             background: var(--text); color: var(--primary); 
-            border: none; font-weight: 900; cursor: pointer; 
+            border: none; font-weight: 900; cursor: pointer;
             font-size: 1.2rem; text-transform: uppercase; 
             text-align: center; letter-spacing: 5px;
-            position: relative; transition: all 0.5s ease;
+            transition: all 0.5s ease;
             clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
         }
 
-        /* --- Mobile Responsive Updates (Added without changing original logic) --- */
-        @media (max-width: 768px) {
-            nav { padding: 10px 3%; }
-            .logo { font-size: 1.4rem; }
-            .search-container { margin: 0 10px; }
-            #search-input { padding: 8px 10px; font-size: 0.8rem; }
-            #cart-count { font-size: 0.8rem; padding: 5px 10px; }
-
-            .hero h1 { letter-spacing: -2px; }
-            
-            .grid { grid-template-columns: 1fr; } /* Single column for mobile */
-            .product-card { padding: 20px; }
-            
-            .detail-content { margin-top: 20px; gap: 20px; }
-            .detail-img { min-width: 100%; max-height: 40vh; }
+        /* Responsive Fixes */
+        @media (max-width: 600px) {
+            .grid { grid-template-columns: repeat(2, 1fr); }
+            .detail-content { flex-direction: column; padding: 20px; margin: 20px auto 80px; }
+            .detail-img { min-width: 100%; max-height: 300px; }
             #panel-title { font-size: 2rem !important; }
-            #panel-price { font-size: 1.8rem !important; }
-            
-            .buy-now { padding: 15px; font-size: 1rem; letter-spacing: 2px; }
-            .close-btn { margin: 20px 0 0 20px; padding: 10px 20px; }
-        }
-
-        @media (max-width: 480px) {
-            .hero h1 { font-size: 3.5rem; }
-            .shop-header { padding: 40px 5% 20px; }
+            #panel-price { font-size: 1.5rem !important; }
         }
     </style>
 </head>
@@ -176,15 +158,15 @@
     <script>
         const products = [
             { id: 1, name: "Snekaer", price: "₹2200", desc: "Aerodynamic high-speed footwear.", img: "snekaer.jpg", link: "https://amzn.to/4muZs3U" },
-            { id: 2, name: "Smooth Leather Bag", price: "₹350", desc: "Gear 14 cms Blue Casual Backpack.", img: "bag.jpg", link: "https://amzn.to/4vzfUEC" },
-            { id: 3, name: "Gear 22", price: "₹500", desc: "Gear 22 ltrs Black and Royal Blue Casual Backpack.", img: "bag1.jpg", link: "https://amzn.to/4crcnzl" },
-            { id: 4, name: "EXHEART EXF-311WT Neck Strap Fan", price: "₹200", desc: "EXHEART EXF-311WT Neck Strap Fan.", img: "fan1.jpg", link: "https://amzn.to/4mv0EUW" },
-            { id: 5, name: "Neon Runner", price: "₹2500", desc: "Aerodynamic high-speed footwear.", img: "shoe.jpg", link: "https://amzn.to/4dPd340" },
-            { id: 6, name: "Noise Watch", price: "₹5200", desc: "Titanium casing with smart tracking.", img: "watch.jpg", link: "https://amzn.to/4vsNGLC" },
-            { id: 7, name: "Rgb light", price: "₹599", desc: "One94Store 5 Meter Smart RGB Neon LED Strip Lights with App & Remote", img: "light.jpg", link: "https://amzn.to/4tyjcqp" },
-            { id: 8, name: "Hand Fan", price: "₹299", desc: "The most attractive and athetic hand fan for personal use rechargable and more useful.", img: "fan.jpg", link: "https://amzn.to/4tISWZN" },
-            { id: 9, name: "Valentine Gift", price: "₹299", desc: "CraftIndia Valentine Gift for Girlfriend Boyfriend", img: "statue.jpg", link: "https://amzn.to/42a99vj" },
-            { id: 10, name: "Ram Statue", price: "₹100", desc: "The most cutest statue over earth and more atrractive.", img: "ram.jpg", link: "https://amzn.to/4vAUqas" }
+            { id: 1, name: "Smooth Leather Bag", price: "₹350", desc: "Gear 14 cms Blue Casual Backpack.", img: "bag.jpg", link: "https://amzn.to/4vzfUEC" },
+            { id: 1, name: "Gear 22", price: "₹500", desc: "Gear 22 ltrs Black and Royal Blue Casual Backpack.", img: "bag1.jpg", link: "https://amzn.to/4crcnzl" },
+            { id: 1, name: "EXHEART EXF-311WT Neck Strap Fan", price: "₹200", desc: "EXHEART EXF-311WT Neck Strap Fan.", img: "fan1.jpg", link: "https://amzn.to/4mv0EUW" },
+            { id: 1, name: "Neon Runner", price: "₹2500", desc: "Aerodynamic high-speed footwear.", img: "shoe.jpg", link: "https://amzn.to/4dPd340" },
+            { id: 2, name: "Noise Watch", price: "₹5200", desc: "Titanium casing with smart tracking.", img: "watch.jpg", link: "https://amzn.to/4vsNGLC" },
+            { id: 3, name: "Rgb light", price: "₹599", desc: "One94Store 5 Meter Smart RGB Neon LED Strip Lights with App & Remote", img: "light.jpg", link: "https://amzn.to/4tyjcqp" },
+            { id: 3, name: "Hand Fan", price: "₹299", desc: "The most attractive and athetic hand fan for personal use rechargable and more useful.", img: "fan.jpg", link: "https://amzn.to/4tISWZN" },
+            { id: 3, name: "Valentine Gift", price: "₹299", desc: "CraftIndia Valentine Gift for Girlfriend Boyfriend", img: "statue.jpg", link: "https://amzn.to/42a99vj" },
+            { id: 4, name: "Ram Statue", price: "₹100", desc: "The most cutest statue over earth and more atrractive.", img: "ram.jpg", link: "https://amzn.to/4vAUqas" }
         ];
 
         function initShop(filter = "") {
