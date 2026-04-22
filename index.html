@@ -20,11 +20,11 @@
             --bg: #ffffff;
             --text: #000000;
             --gray: #f4f4f4;
-            --border-width: 3px;
+           
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
-        body { background: var(--bg); color: var(--text); overflow-x: hidden; }
+        body { background: var(--bg); color: var(--text); overflow-x: hidden; width: 100%; }
 
         /* Navigation */
         nav {
@@ -42,12 +42,12 @@
 
         /* Hero Section */
         .hero {
-            height: 100vh; display: flex; flex-direction: column;
+            height: 100vh; height: 100svh; display: flex; flex-direction: column;
             justify-content: center; align-items: center; text-align: center;
             background: var(--primary); padding: 20px; border-bottom: var(--border-width) solid var(--text);
         }
         .hero h1 { 
-            font-size: clamp(4rem, 15vw, 12rem); line-height: 0.85; 
+            font-size: clamp(3rem, 12vw, 12rem); line-height: 0.85; 
             font-weight: 900; letter-spacing: -5px; text-transform: uppercase;
             overflow: hidden;
         }
@@ -64,7 +64,7 @@
         /* Grid */
         .shop-header { padding: 80px 5% 40px; font-size: clamp(2.5rem, 8vw, 6rem); font-weight: 900; text-transform: uppercase; }
         .grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
             gap: 0; background: var(--text); border: var(--border-width) solid var(--text);
         }
         .product-card {
@@ -110,13 +110,19 @@
             clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
         }
 
-        /* Responsive Fixes */
+        /* Mobile Fixes for 4 per row */
         @media (max-width: 600px) {
-            .grid { grid-template-columns: repeat(2, 1fr); }
+            .grid { grid-template-columns: repeat(2, 1fr); gap: 2px; }
+            .product-card { padding: 10px; }
+            .product-card img { margin-bottom: 5px; border-width: 1px; }
+            .product-card h3 { font-size: 0.7rem; }
+            .product-card div { font-size: 0.6rem; }
+            
+            .search-container { margin: 0 10px; }
             .detail-content { flex-direction: column; padding: 20px; margin: 20px auto 80px; }
             .detail-img { min-width: 100%; max-height: 300px; }
-            #panel-title { font-size: 2rem !important; }
-            #panel-price { font-size: 1.5rem !important; }
+            #panel-title { font-size: 1.5rem !important; }
+            #panel-price { font-size: 1.2rem !important; }
         }
     </style>
 </head>
@@ -161,17 +167,17 @@
     <script>
         const products = [
             { id: 1, name: "Snekaer", price: "₹2200", desc: "Aerodynamic high-speed footwear.", img: "snekaer.jpg", link: "https://amzn.to/4muZs3U" },
-{ id: 1, name: "Mobile Stand", price: "₹149", desc: "Mobile Phone Charging Stand, Storage Holder, Bedside Fixed Rack, Home Organization Supplies, Bedroom and Office Accessories, Bathroom Storage.", img: "home.jpg", link: "https://amzn.to/4tZTpqT" },
+            { id: 1, name: "Mobile Stand", price: "₹149", desc: "Mobile Phone Charging Stand, Storage Holder, Bedside Fixed Rack, Home Organization Supplies, Bedroom and Office Accessories, Bathroom Storage.", img: "home.jpg", link: "https://amzn.to/4tZTpqT" },
             { id: 1, name: "Smooth Leather Bag", price: "₹350", desc: "Gear 14 cms Blue Casual Backpack.", img: "bag.jpg", link: "https://amzn.to/4vzfUEC" },
-{ id: 1, name: "Cleaner For House", price: "₹120", desc: "Bathroom Plastic Cleaning Brush,Tiles Cleaning Brush,Hard Bristle Rotating Crevice Gap Cleaning Brushes For Bathroom,Floor Cleaner.", img: "clear.jpg", link: "https://amzn.to/42mlP2d" },
+            { id: 1, name: "Cleaner For House", price: "₹120", desc: "Bathroom Plastic Cleaning Brush,Tiles Cleaning Brush,Hard Bristle Rotating Crevice Gap Cleaning Brushes For Bathroom,Floor Cleaner.", img: "clear.jpg", link: "https://amzn.to/42mlP2d" },
             { id: 1, name: "Stainless Steel Julienne", price: "₹500", desc: "✅ 2-in-1 Multifunctional Design :- Effortlessly peel.", img: "julni.jpg", link: "https://amzn.to/4sMKEiX" },
-{ id: 1, name: "Stainless Steel Julienne", price: "₹500", desc: "Gear 22 ltrs Black and Royal Blue Casual Backpack.", img: "bag1.jpg", link: "https://amzn.to/4crcnzl" },
+            { id: 1, name: "Stainless Steel Julienne", price: "₹500", desc: "Gear 22 ltrs Black and Royal Blue Casual Backpack.", img: "bag1.jpg", link: "https://amzn.to/4crcnzl" },
             { id: 1, name: "Strap Fan", price: "₹200", desc: "EXHEART EXF-311WT Neck Strap Fan.", img: "fan1.jpg", link: "https://amzn.to/4mv0EUW" },
             { id: 1, name: "Neon Runner", price: "₹2500", desc: "Aerodynamic high-speed footwear.", img: "shoe.jpg", link: "https://amzn.to/4dPd340" },
             { id: 2, name: "Noise Watch", price: "₹5200", desc: "Titanium casing with smart tracking.", img: "watch.jpg", link: "https://amzn.to/4vsNGLC" },
             { id: 3, name: "Rgb light", price: "₹599", desc: "One94Store 5 Meter Smart RGB Neon LED Strip Lights with App & Remote", img: "light.jpg", link: "https://amzn.to/4tyjcqp" },
             { id: 3, name: "Hand Fan", price: "₹299", desc: "The most attractive and athetic hand fan for personal use rechargable and more useful.", img: "fan.jpg", link: "https://amzn.to/4tISWZN" },
-{ id: 3, name: "Chips Cutter", price: "₹172", desc: "Sharp, stainless steel blades for easy grating.", img: "cutter.jpg", link: "https://amzn.to/4tVMY7Y" },
+            { id: 3, name: "Chips Cutter", price: "₹172", desc: "Sharp, stainless steel blades for easy grating.", img: "cutter.jpg", link: "https://amzn.to/4tVMY7Y" },
             { id: 3, name: "Valentine Gift", price: "₹299", desc: "CraftIndia Valentine Gift for Girlfriend Boyfriend", img: "statue.jpg", link: "https://amzn.to/42a99vj" },
             { id: 4, name: "Ram Statue", price: "₹100", desc: "The most cutest statue over earth and more atrractive.", img: "ram.jpg", link: "https://amzn.to/4vAUqas" }
         ];
